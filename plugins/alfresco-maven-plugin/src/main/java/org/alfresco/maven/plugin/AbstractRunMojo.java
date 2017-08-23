@@ -320,6 +320,9 @@ public abstract class AbstractRunMojo extends AbstractMojo {
     @Parameter(property = "alfresco.platform.version", defaultValue = "5.2.f")
     protected String alfrescoPlatformVersion;
 
+    @Parameter(property = "alfresco.solr4.version", defaultValue = "5.2.f")
+    protected String alfrescoSolr4version;
+
     @Parameter(property = "alfresco.share.version", defaultValue = "5.2.e")
     protected String alfrescoShareVersion;
 
@@ -1519,6 +1522,20 @@ public abstract class AbstractRunMojo extends AbstractMojo {
     }
 
     /**
+     * Returns true if current ACS version (i.e. version of alfresco.war) is
+     * >= 5.3
+     *
+     * @return true if ACS version >= 5.3
+     */
+    private boolean isPlatformVersionGtOrEqTo53() {
+        if (getPlatformVersionNumber() >= 53) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Returns true if current platform version (i.e. version of alfresco.war) is
      * <= 4.2
      *
@@ -1568,6 +1585,8 @@ public abstract class AbstractRunMojo extends AbstractMojo {
      * 5.0.x Enterprise == alfresco-enterprise.war
      * 5.1.x Community  == alfresco-platform.war
      * 5.1.x Enterprise == alfresco-platform-enterprise.war
+     * 5.3.X Community  == content-services-community.war
+     * 5.3.X Enterprise == content-services.war
      *
      * @return the Maven artifactId for Alfresco Platform webapp
      */
@@ -1599,6 +1618,16 @@ public abstract class AbstractRunMojo extends AbstractMojo {
             alfrescoPlatformWarArtifactId = "alfresco-platform-enterprise";
         }
 
+        if (isPlatformVersionGtOrEqTo53() == true && alfrescoEdition.equals(ALFRESCO_COMMUNITY_EDITION)) {
+            // We are running version 5.3 or greater in community so use "alfresco-platform"
+            alfrescoPlatformWarArtifactId = "content-services-community";
+        }
+
+        if (isPlatformVersionGtOrEqTo53() == true && alfrescoEdition.equals(ALFRESCO_ENTERPRISE_EDITION)) {
+            // We are running version 5.3 or greater in enterprise so use "alfresco-platform-enterprise"
+            alfrescoPlatformWarArtifactId = "content-services";
+        }
+
         return alfrescoPlatformWarArtifactId;
     }
 
@@ -1616,7 +1645,7 @@ public abstract class AbstractRunMojo extends AbstractMojo {
                     "/solr", "${project.build.testOutputDirectory}/tomcat/context-solr.xml");
         } else {
             // Solr version 4.0
-            webappElement = createWebAppElement(alfrescoGroupId, getSolrArtifactId(), alfrescoPlatformVersion,
+            webappElement = createWebAppElement(alfrescoGroupId, getSolrArtifactId(), alfrescoSolr4version,
                 "/solr4", "${project.build.testOutputDirectory}/tomcat/context-solr.xml");
         }
 

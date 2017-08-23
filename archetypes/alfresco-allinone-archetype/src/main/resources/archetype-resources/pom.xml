@@ -36,7 +36,7 @@
              executing for example $ mvn clean install alfresco:run -->
         <alfresco.platform.version>5.2.f</alfresco.platform.version>
         <alfresco.share.version>5.2.e</alfresco.share.version>
-
+        <alfresco.solr4.version>5.2.f</alfresco.solr4.version>
         <!-- Default is to run with a Community edition, change to 'enterprise' if using Enterprise edition -->
         <maven.alfresco.edition>community</maven.alfresco.edition>
 
