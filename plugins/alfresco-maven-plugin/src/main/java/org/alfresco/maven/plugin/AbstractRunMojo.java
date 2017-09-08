@@ -414,7 +414,7 @@ public abstract class AbstractRunMojo extends AbstractMojo {
                                 element(name("artifactItem"),
                                         element(name("groupId"), alfrescoGroupId),
                                         element(name("artifactId"), getSolrArtifactId()),
-                                        element(name("version"), alfrescoContentServicesVersion),
+                                        element(name("version"), alfrescoSolr4version),
                                         // The Solr config is not in a special file with classifier config if <= 4.2
                                         isPlatformVersionLtOrEqTo42() ? element(name("classifier"), "") : element(name("classifier"), "config"),
                                         element(name("type"), "zip")
