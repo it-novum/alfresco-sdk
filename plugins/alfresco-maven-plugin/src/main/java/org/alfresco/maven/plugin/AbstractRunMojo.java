@@ -317,8 +317,8 @@ public abstract class AbstractRunMojo extends AbstractMojo {
     @Parameter(property = "activiti.admin.war.artifactId", defaultValue = "activiti-admin")
     protected String activitiAdminWarArtifactId;
 
-    @Parameter(property = "alfresco.platform.version", defaultValue = "5.2.f")
-    protected String alfrescoPlatformVersion;
+    @Parameter(property = "alfresco.content.services.version", defaultValue = "5.2.f")
+    protected String alfrescoContentServicesVersion;
 
     @Parameter(property = "alfresco.solr4.version", defaultValue = "5.2.f")
     protected String alfrescoSolr4version;
@@ -414,7 +414,7 @@ public abstract class AbstractRunMojo extends AbstractMojo {
                                 element(name("artifactItem"),
                                         element(name("groupId"), alfrescoGroupId),
                                         element(name("artifactId"), getSolrArtifactId()),
-                                        element(name("version"), alfrescoPlatformVersion),
+                                        element(name("version"), alfrescoContentServicesVersion),
                                         // The Solr config is not in a special file with classifier config if <= 4.2
                                         isPlatformVersionLtOrEqTo42() ? element(name("classifier"), "") : element(name("classifier"), "config"),
                                         element(name("type"), "zip")
@@ -996,7 +996,7 @@ public abstract class AbstractRunMojo extends AbstractMojo {
      */
     protected void buildPlatformWar() throws MojoExecutionException {
         buildCustomWarInDir(PLATFORM_WAR_PREFIX_NAME, platformModules,
-                alfrescoGroupId, getPlatformWarArtifactId(), alfrescoPlatformVersion);
+                alfrescoGroupId, getPlatformWarArtifactId(), alfrescoContentServicesVersion);
 
         commentOutSecureCommsInPlatformWebXml();
         copyAlfrescoLicense();
@@ -1555,7 +1555,7 @@ public abstract class AbstractRunMojo extends AbstractMojo {
      * @return major and minor version as int, such as 41,50,51
      */
     private int getPlatformVersionNumber() {
-        return Integer.parseInt(alfrescoPlatformVersion.replaceAll("[^0-9]", "").substring(0, 2));
+        return Integer.parseInt(alfrescoContentServicesVersion.replaceAll("[^0-9]", "").substring(0, 2));
     }
 
     /**
@@ -1680,7 +1680,7 @@ public abstract class AbstractRunMojo extends AbstractMojo {
                                     element(name("artifactItem"),
                                             element(name("groupId"), alfrescoGroupId),
                                             element(name("artifactId"), "alfresco-repository"),
-                                            element(name("version"), alfrescoPlatformVersion),
+                                            element(name("version"), alfrescoContentServicesVersion),
                                             element(name("includes"), "alfresco/dbscripts/create/org.hibernate.dialect.PostgreSQLDialect/*,alfresco/dbscripts/upgrade/*/org.hibernate.dialect.PostgreSQLDialect/*,alfresco/ibatis/org.hibernate.dialect.PostgreSQLDialect/*")
                                     )
                             )
@@ -1703,7 +1703,7 @@ public abstract class AbstractRunMojo extends AbstractMojo {
                                         element(name("artifactItem"),
                                                 element(name("groupId"), alfrescoGroupId),
                                                 element(name("artifactId"), "alfresco-enterprise-repository"),
-                                                element(name("version"), alfrescoPlatformVersion),
+                                                element(name("version"), alfrescoContentServicesVersion),
                                                 element(name("includes"), "alfresco/dbscripts/create/org.hibernate.dialect.PostgreSQLDialect/*,alfresco/dbscripts/upgrade/*/org.hibernate.dialect.PostgreSQLDialect/*,alfresco/ibatis/org.hibernate.dialect.PostgreSQLDialect/*")
                                         )
                                 )

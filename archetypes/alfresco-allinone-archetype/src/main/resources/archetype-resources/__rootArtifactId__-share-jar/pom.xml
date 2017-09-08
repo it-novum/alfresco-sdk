@@ -18,7 +18,7 @@
 
     <!-- Following dependencies are needed for compiling Java code in src/main/java;
          <scope>provided</scope> is inherited for each of the following;
-         for more info, please refer to alfresco-platform-distribution POM -->
+         for more info, please refer to acs-packaging POM -->
     <dependencies>
         <dependency>
             <groupId>${alfresco.groupId}</groupId>

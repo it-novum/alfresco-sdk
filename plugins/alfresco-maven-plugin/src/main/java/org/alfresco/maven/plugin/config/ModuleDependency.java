@@ -26,7 +26,7 @@ import org.apache.commons.lang.StringUtils;
  * <p/>
  * This is so we can skip the WAR projects in the AIO project,
  * and so we can include the Share Services AMP when running
- * with a simple platform JAR.
+ * with a simple ACS JAR.
  * <p/>
  * This class is used by the RunMojo class.
  * <p/>

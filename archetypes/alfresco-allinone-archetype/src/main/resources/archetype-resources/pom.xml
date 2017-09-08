@@ -31,10 +31,10 @@
         <!-- Properties used in dependency declarations, you don't need to change these -->
         <alfresco.groupId>org.alfresco</alfresco.groupId>
 
-        <!-- Alfresco Platform and Share webapp versions, these are the original Alfresco webapps that will be
+        <!-- ACS and Share webapp versions, these are the original Alfresco webapps that will be
              customized and then deployed and run by the tomcat maven plugin when
              executing for example $ mvn clean install alfresco:run -->
-        <alfresco.platform.version>5.3-SNAPSHOT</alfresco.platform.version>
+        <alfresco.content.services.version>5.3-SNAPSHOT</alfresco.content.services.version>
         <alfresco.share.version>5.2.e</alfresco.share.version>
         <alfresco.solr4.version>6.2</alfresco.solr4.version>
         <!-- Default is to run with a Community edition, change to 'enterprise' if using Enterprise edition -->
@@ -109,31 +109,25 @@
                  NOTE: It defaults to the latest version this SDK pom has been tested with,
                        but alfresco version can/should be overridden in your project's pom
             -->
-            <!--<dependency>-->
-                <!--<groupId>${alfresco.groupId}</groupId>-->
-                <!--<artifactId>alfresco-platform-distribution</artifactId>-->
-                <!--<version>${alfresco.platform.version}</version>-->
-                <!--<type>pom</type>-->
-                <!--<scope>import</scope>-->
-            <!--</dependency>-->
 
+            <!-- ACS 6.0+ dependency -->
             <!-- Community -->
             <dependency>
                 <groupId>${alfresco.groupId}</groupId>
                 <artifactId>acs-community-packaging</artifactId>
-                <version>${alfresco.platform.version}</version>
+                <version>${alfresco.content.services.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
 
             <!-- Enterprise -->
-            <!--<dependency>-->
-                <!--<groupId>${alfresco.groupId}</groupId>-->
-                <!--<artifactId>acs-packaging</artifactId>-->
-                <!--<version>${alfresco.platform.version}</version>-->
-                <!--<type>pom</type>-->
-                <!--<scope>import</scope>-->
-            <!--</dependency>-->
+            <dependency>
+                <groupId>${alfresco.groupId}</groupId>
+                <artifactId>acs-packaging</artifactId>
+                <version>${alfresco.content.services.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
 
             <!-- Redefine the following Share dependencies as they have different version numbers than platform.
                  They are defined in alfresco-platform-distribution... -->

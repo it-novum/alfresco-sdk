@@ -31,10 +31,11 @@
         <!-- Properties used in dependency declarations, you don't need to change these -->
         <alfresco.groupId>org.alfresco</alfresco.groupId>
 
-        <!-- Alfresco Platform webapp version, this is the original Alfresco webapp that will be
+        <!-- ACS webapp version, this is the original Alfresco webapp that will be
             customized and then deployed and run by the tomcat maven plugin when
             executing for example $ mvn clean install alfresco:run -->
-        <alfresco.platform.version>5.2.f</alfresco.platform.version>
+        <alfresco.content.services.version>5.3-SNAPSHOT</alfresco.content.services.version>
+        <alfresco.solr4.version>6.2</alfresco.solr4.version>
         <!-- Alfresco Share version, so we can bring in correct alfresco-share-services artifact -->
         <alfresco.share.version>5.2.e</alfresco.share.version>
 
@@ -62,10 +63,21 @@
     -->
     <dependencyManagement>
         <dependencies>
+            <!-- ACS 6.0+ dependency -->
+            <!-- Community -->
             <dependency>
                 <groupId>${alfresco.groupId}</groupId>
-                <artifactId>alfresco-platform-distribution</artifactId>
-                <version>${alfresco.platform.version}</version>
+                <artifactId>acs-community-packaging</artifactId>
+                <version>${alfresco.content.services.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!-- Enterprise -->
+            <dependency>
+                <groupId>${alfresco.groupId}</groupId>
+                <artifactId>acs-packaging</artifactId>
+                <version>${alfresco.content.services.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
