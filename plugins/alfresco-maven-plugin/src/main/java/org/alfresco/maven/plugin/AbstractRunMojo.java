@@ -1680,7 +1680,8 @@ public abstract class AbstractRunMojo extends AbstractMojo {
                                     element(name("artifactItem"),
                                             element(name("groupId"), alfrescoGroupId),
                                             element(name("artifactId"), "alfresco-repository"),
-                                            element(name("version"), alfrescoContentServicesVersion),
+                                            // Don't specify the version, it should be driven by dependency management
+//                                            element(name("version"), alfrescoContentServicesVersion),
                                             element(name("includes"), "alfresco/dbscripts/create/org.hibernate.dialect.PostgreSQLDialect/*,alfresco/dbscripts/upgrade/*/org.hibernate.dialect.PostgreSQLDialect/*,alfresco/ibatis/org.hibernate.dialect.PostgreSQLDialect/*")
                                     )
                             )
@@ -1703,7 +1704,8 @@ public abstract class AbstractRunMojo extends AbstractMojo {
                                         element(name("artifactItem"),
                                                 element(name("groupId"), alfrescoGroupId),
                                                 element(name("artifactId"), "alfresco-enterprise-repository"),
-                                                element(name("version"), alfrescoContentServicesVersion),
+                                                // Don't specify the version, it should be driven by dependency management
+//                                                element(name("version"), alfrescoContentServicesVersion),
                                                 element(name("includes"), "alfresco/dbscripts/create/org.hibernate.dialect.PostgreSQLDialect/*,alfresco/dbscripts/upgrade/*/org.hibernate.dialect.PostgreSQLDialect/*,alfresco/ibatis/org.hibernate.dialect.PostgreSQLDialect/*")
                                         )
                                 )
