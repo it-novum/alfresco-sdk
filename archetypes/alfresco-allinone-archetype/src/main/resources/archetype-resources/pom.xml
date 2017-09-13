@@ -34,9 +34,10 @@
         <!-- ACS and Share webapp versions, these are the original Alfresco webapps that will be
              customized and then deployed and run by the tomcat maven plugin when
              executing for example $ mvn clean install alfresco:run -->
-        <alfresco.content.services.version>5.3-SNAPSHOT</alfresco.content.services.version>
+        <acs.community.version>6.0.a-SNAPSHOT</acs.community.version>
+        <acs.enterprise.version>6.0.0-SNAPSHOT</acs.enterprise.version>
         <alfresco.share.version>5.2.e</alfresco.share.version>
-        <alfresco.solr4.version>6.2</alfresco.solr4.version>
+        <alfresco.solr4.version>6.5</alfresco.solr4.version>
         <!-- Default is to run with a Community edition, change to 'enterprise' if using Enterprise edition -->
         <maven.alfresco.edition>community</maven.alfresco.edition>
 
@@ -115,7 +116,7 @@
             <dependency>
                 <groupId>${alfresco.groupId}</groupId>
                 <artifactId>acs-community-packaging</artifactId>
-                <version>${alfresco.content.services.version}</version>
+                <version>${acs.community.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -124,7 +125,7 @@
             <dependency>
                 <groupId>${alfresco.groupId}</groupId>
                 <artifactId>acs-packaging</artifactId>
-                <version>${alfresco.content.services.version}</version>
+                <version>${acs.enterprise.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

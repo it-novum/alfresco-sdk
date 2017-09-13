@@ -86,7 +86,6 @@ public class IntegrationTestMojo extends AbstractRunMojo {
                 unpackSolrConfig();
                 fixSolrHomePath();
                 replaceSolrConfigProperties();
-                installSolr10InLocalRepo();
             }
 
             if (enableTestProperties && enablePlatform) {
