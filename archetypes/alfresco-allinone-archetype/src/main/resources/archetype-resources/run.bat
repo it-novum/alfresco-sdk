@@ -1,8 +1,6 @@
 #set( $symbol_dollar = '$' )
 @ECHO OFF
 
-SET COMPOSE_FILE_PATH=%CD%\target\classes\docker\docker-compose.yml
-
 IF [%M2_HOME%]==[] (
     SET MVN_EXEC=mvn
 )
@@ -12,109 +10,51 @@ IF NOT [%M2_HOME%]==[] (
 )
 
 IF [%1]==[] (
-    echo "Usage: %0 {build_start|start|stop|purge|tail|reload_share|reload_acs|build_test|test}"
+    echo "Usage: %0 {build_start|start|stop|purge|tail|tail_share|reload_share|reload_acs|build_test|test}"
     GOTO END
 )
 
 IF %1==build_start (
-    CALL :down
-    CALL :build
-    CALL :start
-    CALL :tail
+    %MVN_EXEC% clean package docker:build docker:volume-create docker:start
     GOTO END
 )
 IF %1==start (
-    CALL :start
-    CALL :tail
+    %MVN_EXEC% docker:start
     GOTO END
 )
 IF %1==stop (
-    CALL :down
+    %MVN_EXEC% docker:stop -pl ${rootArtifactId}-share-docker
+    %MVN_EXEC% docker:stop
     GOTO END
 )
 IF %1==purge (
-    CALL:down
-    CALL:purge
+    %MVN_EXEC% docker:stop -pl ${rootArtifactId}-share-docker
+    %MVN_EXEC% docker:stop docker:remove docker:volume-remove
     GOTO END
 )
 IF %1==tail (
-    CALL :tail
+    %MVN_EXEC% docker:logs -Ddocker.logAll=true -Ddocker.follow -pl ${rootArtifactId}-platform-docker
+    GOTO END
+)
+IF %1==tail_share (
+    %MVN_EXEC% docker:logs -Ddocker.logAll=true -Ddocker.follow -pl ${rootArtifactId}-share-docker
     GOTO END
 )
 IF %1==reload_share (
-    CALL :build_share
-    CALL :start_share
-    CALL :tail
+    %MVN_EXEC% docker:stop package docker:build docker:start -pl ${rootArtifactId}-share,${rootArtifactId}-share-docker
     GOTO END
 )
 IF %1==reload_acs (
-    CALL :build_acs
-    CALL :start_acs
-    CALL :tail
+    %MVN_EXEC% docker:stop package docker:build docker:start -pl ${rootArtifactId}-platform,${rootArtifactId}-integration-tests,${rootArtifactId}-platform-docker
     GOTO END
 )
 IF %1==build_test (
-    CALL :down
-    CALL :build
-    CALL :prepare-test
-    CALL :start
-    CALL :test
-    CALL :tail_all
-    CALL :down
+    %MVN_EXEC% clean verify
     GOTO END
 )
 IF %1==test (
-    CALL :test
-    GOTO END
+    %MVN_EXEC% verify
 )
-echo "Usage: %0 {build_start|start|stop|purge|tail|reload_share|reload_acs|build_test|test}"
+echo "Usage: %0 {build_start|start|stop|purge|tail|tail_share|reload_share|reload_acs|build_test|test}"
 :END
 EXIT /B %ERRORLEVEL%
-
-:start
-    docker volume create ${rootArtifactId}-acs-volume
-    docker volume create ${rootArtifactId}-db-volume
-    docker volume create ${rootArtifactId}-ass-volume
-    docker-compose -f "%COMPOSE_FILE_PATH%" up --build -d
-EXIT /B 0
-:start_share
-    docker-compose -f "%COMPOSE_FILE_PATH%" up --build -d ${rootArtifactId}-share
-EXIT /B 0
-:start_acs
-    docker-compose -f "%COMPOSE_FILE_PATH%" up --build -d ${rootArtifactId}-acs
-EXIT /B 0
-:down
-    if exist "%COMPOSE_FILE_PATH%" (
-        docker-compose -f "%COMPOSE_FILE_PATH%" down
-    )
-EXIT /B 0
-:build
-	call %MVN_EXEC% clean package
-EXIT /B 0
-:build_share
-    docker-compose -f "%COMPOSE_FILE_PATH%" kill ${rootArtifactId}-share
-    docker-compose -f "%COMPOSE_FILE_PATH%" rm -f ${rootArtifactId}-share
-	call %MVN_EXEC% clean package -pl ${rootArtifactId}-share,${rootArtifactId}-share-docker
-EXIT /B 0
-:build_acs
-    docker-compose -f "%COMPOSE_FILE_PATH%" kill ${rootArtifactId}-acs
-    docker-compose -f "%COMPOSE_FILE_PATH%" rm -f ${rootArtifactId}-acs
-	call %MVN_EXEC% clean package -pl ${rootArtifactId}-platform,${rootArtifactId}-platform-docker
-EXIT /B 0
-:tail
-    docker-compose -f "%COMPOSE_FILE_PATH%" logs -f
-EXIT /B 0
-:tail_all
-    docker-compose -f "%COMPOSE_FILE_PATH%" logs --tail="all"
-EXIT /B 0
-:prepare-test
-    call %MVN_EXEC% verify -DskipTests=true -pl ${rootArtifactId}-platform,${rootArtifactId}-integration-tests,${rootArtifactId}-platform-docker
-EXIT /B 0
-:test
-    call %MVN_EXEC% verify -pl ${rootArtifactId}-platform,${rootArtifactId}-integration-tests
-EXIT /B 0
-:purge
-    docker volume rm -f ${rootArtifactId}-acs-volume
-    docker volume rm -f ${rootArtifactId}-db-volume
-    docker volume rm -f ${rootArtifactId}-ass-volume
-EXIT /B 0

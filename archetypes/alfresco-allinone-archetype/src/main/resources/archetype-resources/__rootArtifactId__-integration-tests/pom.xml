@@ -59,18 +59,6 @@
                     </execution>
                 </executions>
             </plugin>
-
-            <!-- Runs the integration tests, any class that follows naming convention
-                 "**/IT*.java", "**/*IT.java", and "**/*ITCase.java" will be considered an integration test -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <configuration>
-                    <systemPropertyVariables>
-                        <acs.endpoint.path>${test.acs.endpoint.path}</acs.endpoint.path>
-                    </systemPropertyVariables>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 </project>

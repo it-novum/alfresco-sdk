@@ -45,6 +45,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <!-- Filter the Dockerfile and the other files added to the container to be able to replace maven properties -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -57,7 +58,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <outputDirectory>${project.build.directory}/resources</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>src/main/docker</directory>
@@ -67,6 +68,76 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <configuration>
+                    <images>
+                        <image>
+                            <alias>share</alias>
+                            <name>%a-share:%v</name>
+                            <build>
+                                <from>${docker.share.image}:${alfresco.share.version}</from>
+                                <assembly>
+                                    <inline>
+                                        <fileSets>
+                                            <fileSet>
+                                                <directory>${project.build.directory}/extensions</directory>
+                                                <outputDirectory>tomcat/webapps/share/WEB-INF/lib/</outputDirectory>
+                                                <includes>
+                                                    <include>*.jar</include>
+                                                </includes>
+                                            </fileSet>
+                                            <fileSet>
+                                                <directory>${project.build.directory}/extensions</directory>
+                                                <outputDirectory>tomcat/amps_share/</outputDirectory>
+                                                <includes>
+                                                    <include>*.amp</include>
+                                                </includes>
+                                            </fileSet>
+                                            <fileSet>
+                                                <directory>${project.build.directory}/resources</directory>
+                                                <outputDirectory>tomcat/shared/classes/alfresco/web-extension</outputDirectory>
+                                                <includes>
+                                                    <include>share-config-custom.xml</include>
+                                                </includes>
+                                            </fileSet>
+                                            <fileSet>
+                                                <directory>${project.build.directory}/resources</directory>
+                                                <outputDirectory>tomcat/webapps/share/WEB-INF/classes</outputDirectory>
+                                                <includes>
+                                                    <include>log4j.properties</include>
+                                                    <include>hotswap-agent.properties</include>
+                                                </includes>
+                                            </fileSet>
+                                        </fileSets>
+                                    </inline>
+                                </assembly>
+                                <runCmds>
+                                    <run>yes| /usr/bin/cp -r /maven/tomcat/* ${docker.tomcat.dir}/</run>
+                                    <run>java -jar ${docker.tomcat.dir}/alfresco-mmt/alfresco-mmt*.jar install ${docker.tomcat.dir}/amps_share ${docker.tomcat.dir}/webapps/share -directory -nobackup -force</run>
+                                </runCmds>
+                                <env>
+                                    <CATALINA_OPTS>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:8888</CATALINA_OPTS>
+                                    <REPO_HOST>acs</REPO_HOST>
+                                    <REPO_PORT>8080</REPO_PORT>
+                                </env>
+                            </build>
+                            <run>
+                                <network>
+                                    <name>${docker.network}</name>
+                                    <alias>share</alias>
+                                </network>
+                                <ports>
+                                    <port>${share.port}:8080</port>
+                                    <port>${share.debug.port}:8888</port>
+                                </ports>
+                            </run>
+                        </image>
+                    </images>
+                </configuration>      
             </plugin>
         </plugins>
     </build>
