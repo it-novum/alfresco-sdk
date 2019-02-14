@@ -9,37 +9,23 @@ fi
 
 case "${symbol_dollar}1" in
   build_start)
-    ${symbol_dollar}MVN_EXEC clean package docker:build docker:volume-create docker:start
+    ${symbol_dollar}MVN_EXEC clean package docker:build docker:volume-create docker:start cargo:run
     ;;
   start)
-    ${symbol_dollar}MVN_EXEC docker:start
+    ${symbol_dollar}MVN_EXEC docker:start cargo:run
+    ;;
+  start_tomcat)
+    ${symbol_dollar}MVN_EXEC cargo:run
     ;;
   stop)
-    ${symbol_dollar}MVN_EXEC docker:stop -pl ${rootArtifactId}-share-docker
     ${symbol_dollar}MVN_EXEC docker:stop
     ;;
   purge)
-    ${symbol_dollar}MVN_EXEC docker:stop -pl ${rootArtifactId}-share-docker
-    ${symbol_dollar}MVN_EXEC docker:stop docker:remove docker:volume-remove
-    ;;
-  tail)
-    ${symbol_dollar}MVN_EXEC docker:logs -Ddocker.logAll=true -Ddocker.follow -pl ${rootArtifactId}-platform-docker
-    ;;
-  tail_share)
-    ${symbol_dollar}MVN_EXEC docker:logs -Ddocker.logAll=true -Ddocker.follow -pl ${rootArtifactId}-share-docker
-    ;;
-  reload_share)
-    ${symbol_dollar}MVN_EXEC docker:stop package docker:build docker:start -pl ${rootArtifactId}-share,${rootArtifactId}-share-docker
-    ;;
-  reload_acs)
-    ${symbol_dollar}MVN_EXEC docker:stop package docker:build docker:start -pl ${rootArtifactId}-platform,${rootArtifactId}-integration-tests,${rootArtifactId}-platform-docker
+    ${symbol_dollar}MVN_EXEC clean
     ;;
   build_test)
     ${symbol_dollar}MVN_EXEC clean verify
     ;;
-  test)
-    ${symbol_dollar}MVN_EXEC verify
-    ;;
   *)
-    echo "Usage: ${symbol_dollar}0 {build_start|start|stop|purge|tail|tail_share|reload_share|reload_acs|build_test|test}"
+    echo "Usage: ${symbol_dollar}0 {build_start|start|start_tomcat|stop|purge|build_test}"
 esac

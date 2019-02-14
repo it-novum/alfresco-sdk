@@ -10,51 +10,34 @@ IF NOT [%M2_HOME%]==[] (
 )
 
 IF [%1]==[] (
-    echo "Usage: %0 {build_start|start|stop|purge|tail|tail_share|reload_share|reload_acs|build_test|test}"
+    echo "Usage: %0 {build_start|start|start_tomcat|stop|purge|build_test}"
     GOTO END
 )
 
 IF %1==build_start (
-    %MVN_EXEC% clean package docker:build docker:volume-create docker:start
+    %MVN_EXEC% clean package docker:build docker:volume-create docker:start cargo:run
     GOTO END
 )
 IF %1==start (
-    %MVN_EXEC% docker:start
+    %MVN_EXEC% docker:start cargo:run
+    GOTO END
+)
+IF %1==start_tomcat (
+    %MVN_EXEC% cargo:run
     GOTO END
 )
 IF %1==stop (
-    %MVN_EXEC% docker:stop -pl ${rootArtifactId}-share-docker
     %MVN_EXEC% docker:stop
     GOTO END
 )
 IF %1==purge (
-    %MVN_EXEC% docker:stop -pl ${rootArtifactId}-share-docker
-    %MVN_EXEC% docker:stop docker:remove docker:volume-remove
-    GOTO END
-)
-IF %1==tail (
-    %MVN_EXEC% docker:logs -Ddocker.logAll=true -Ddocker.follow -pl ${rootArtifactId}-platform-docker
-    GOTO END
-)
-IF %1==tail_share (
-    %MVN_EXEC% docker:logs -Ddocker.logAll=true -Ddocker.follow -pl ${rootArtifactId}-share-docker
-    GOTO END
-)
-IF %1==reload_share (
-    %MVN_EXEC% docker:stop package docker:build docker:start -pl ${rootArtifactId}-share,${rootArtifactId}-share-docker
-    GOTO END
-)
-IF %1==reload_acs (
-    %MVN_EXEC% docker:stop package docker:build docker:start -pl ${rootArtifactId}-platform,${rootArtifactId}-integration-tests,${rootArtifactId}-platform-docker
+    %MVN_EXEC% clean
     GOTO END
 )
 IF %1==build_test (
     %MVN_EXEC% clean verify
     GOTO END
 )
-IF %1==test (
-    %MVN_EXEC% verify
-)
-echo "Usage: %0 {build_start|start|stop|purge|tail|tail_share|reload_share|reload_acs|build_test|test}"
+echo "Usage: %0 {build_start|start|start_tomcat|stop|purge|build_test}"
 :END
 EXIT /B %ERRORLEVEL%

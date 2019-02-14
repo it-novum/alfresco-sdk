@@ -3,8 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>${artifactId}</artifactId>
     <name>Alfresco Platform/Repository JAR Module</name>
-    <description>Platform/Repo JAR Module (to be included in the alfresco.war) - part of AIO - SDK 4.0
-    </description>
+    <description>Platform/Repo JAR Module (to be included in the alfresco.war) - part of AIO - SDK 4.0</description>
     <packaging>jar</packaging>
 
     <parent>
@@ -17,6 +16,22 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>${alfresco.groupId}</groupId>
+            <artifactId>alfresco-remote-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.5</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
