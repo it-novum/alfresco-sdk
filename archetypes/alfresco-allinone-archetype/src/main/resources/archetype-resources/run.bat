@@ -15,19 +15,19 @@ IF [%1]==[] (
 )
 
 IF %1==build_start (
-    %MVN_EXEC% clean package docker:build docker:volume-create docker:start cargo:run
+    %MVN_EXEC% package docker:build docker:volume-create docker:start cargo:run
     GOTO END
 )
 IF %1==start (
-    %MVN_EXEC% docker:start cargo:run
+    %MVN_EXEC% package docker:start cargo:run
     GOTO END
 )
 IF %1==start_tomcat (
-    %MVN_EXEC% cargo:run
+    %MVN_EXEC% package cargo:run
     GOTO END
 )
 IF %1==stop (
-    %MVN_EXEC% docker:stop
+    %MVN_EXEC% package docker:stop -DskipTests=true
     GOTO END
 )
 IF %1==purge (
@@ -35,7 +35,7 @@ IF %1==purge (
     GOTO END
 )
 IF %1==build_test (
-    %MVN_EXEC% clean verify
+    %MVN_EXEC% verify
     GOTO END
 )
 echo "Usage: %0 {build_start|start|start_tomcat|stop|purge|build_test}"

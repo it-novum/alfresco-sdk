@@ -15,6 +15,8 @@
     </parent>
 
     <properties>
+        <container.jvmargs.agentpath></container.jvmargs.agentpath>
+        <container.jvmargs.debug></container.jvmargs.debug>
     </properties>
 
     <dependencies>
@@ -29,7 +31,7 @@
             <groupId>org.alfresco</groupId>
             <artifactId>alfresco-mmt</artifactId>
             <scope>runtime</scope>
-        </dependency>    
+        </dependency>
         <!-- Bring in any custom module that should be tested, by default we bring in the Platform JAR module
              that is generated for the AIO project -->
         <dependency>
@@ -267,16 +269,64 @@
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>copy-and-filter-tomcat-resources</id>
+                        <id>copy-and-filter-tomcat-shared-resources</id>
                         <phase>validate</phase>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/tomcat-resources</outputDirectory>
+                            <outputDirectory>${project.build.directory}/tomcat-shared-resources</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>src/main/tomcat</directory>
+                                    <directory>src/main/tomcat/shared</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-and-filter-tomcat-alfresco-resources</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/alfresco</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/tomcat/webapps/alfresco</directory>
+                                    <filtering>true</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-alfresco-license</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/alfresco/WEB-INF/classes/alfresco/extension/license</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/tomcat/license</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-and-filter-tomcat-share-resources</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/share</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/tomcat/webapps/share</directory>
                                     <filtering>true</filtering>
                                 </resource>
                             </resources>
@@ -370,7 +420,7 @@
                                 <user>postgres</user>
                                 <volumes>
                                     <bind>
-                                        <volume>db-volume-aiotomcat1:/var/lib/postgresql/data</volume>
+                                        <volume>db-volume-${rootArtifactId}:/var/lib/postgresql/data</volume>
                                     </bind>
                                 </volumes>
                             </run>
@@ -398,8 +448,8 @@
                                 </ports>
                                 <volumes>
                                     <bind>
-                                        <volume>ass-volume-aiotomcat1:/opt/alfresco-search-services/contentstore</volume>
-                                        <volume>ass-volume-aiotomcat1:/opt/alfresco-search-services/data</volume>
+                                        <volume>ass-volume-${rootArtifactId}:/opt/alfresco-search-services/contentstore</volume>
+                                        <volume>ass-volume-${rootArtifactId}:/opt/alfresco-search-services/data</volume>
                                     </bind>
                                 </volumes>
                             </run>
@@ -407,10 +457,10 @@
                     </images>
                     <volumes>
                         <volume>
-                            <name>db-volume-aiotomcat1</name>
+                            <name>db-volume-${rootArtifactId}</name>
                         </volume>
                         <volume>
-                            <name>ass-volume-aiotomcat1</name>
+                            <name>ass-volume-${rootArtifactId}</name>
                         </volume>
                     </volumes>
                 </configuration>
@@ -467,28 +517,20 @@
                         <home>${project.build.directory}/tomcat</home>
                         <configfiles>
                             <configfile>
-                                <file>${project.build.directory}/tomcat-resources/shared</file>
+                                <file>${project.build.directory}/tomcat-shared-resources</file>
                                 <todir>shared</todir>
                             </configfile>
-                            <configfile>
-                                <file>${project.build.directory}/tomcat-resources/webapps</file>
-                                <todir>webapps</todir>
-                            </configfile>
                         </configfiles>
-                        <files>
-                            <file>
-                                <file>${basedir}/src/main/tomcat/license</file>
-                                <todir>webapps/alfresco/WEB-INF/classes/alfresco/extension</todir>
-                            </file>
-                        </files>
                         <properties>
                             <cargo.servlet.port>${container.port}</cargo.servlet.port>
+                            <cargo.tomcat.connector.maxHttpHeaderSize>65536</cargo.tomcat.connector.maxHttpHeaderSize>
+                            <cargo.start.jvmargs>${container.jvmargs.agentpath} ${container.jvmargs.debug}</cargo.start.jvmargs>
                         </properties>
                     </configuration>
                     <deployables>
                         <deployable>
-                            <groupId>com.itnovum.experiments</groupId>
-                            <artifactId>aiotomcat1-bundle</artifactId>
+                            <groupId>${alfresco.groupId}</groupId>
+                            <artifactId>${alfresco.platform.war}</artifactId>
                             <type>war</type>
                             <location>${project.build.directory}/alfresco</location>
                             <properties>
@@ -496,8 +538,8 @@
                             </properties>
                         </deployable>
                         <deployable>
-                            <groupId>com.itnovum.experiments</groupId>
-                            <artifactId>aiotomcat1-bundle</artifactId>
+                            <groupId>${alfresco.groupId}</groupId>
+                            <artifactId>share</artifactId>
                             <type>war</type>
                             <location>${project.build.directory}/share</location>
                             <properties>
@@ -526,4 +568,26 @@
 
         </plugins>
     </build>
+    
+    <profiles>
+        <profile>
+            <id>jrebel</id>
+            <activation>
+                <property>
+                    <name>current.jrebel.agent.path</name>
+                </property>
+            </activation>
+            <properties>
+                <container.jvmargs.agentpath>-agentpath:${current.jrebel.agent.path}</container.jvmargs.agentpath>
+            </properties>
+        </profile>
+        <profile>
+            <id>debug</id>
+            <activation>
+            </activation>
+            <properties>
+                <container.jvmargs.debug>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=localhost:8000</container.jvmargs.debug>
+            </properties>
+        </profile>
+    </profiles>
 </project>
