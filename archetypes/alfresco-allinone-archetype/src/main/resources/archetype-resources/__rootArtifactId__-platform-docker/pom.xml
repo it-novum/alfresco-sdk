@@ -22,13 +22,6 @@
             <artifactId>${rootArtifactId}-platform</artifactId>
             <version>${version}</version>
         </dependency>
-        <dependency>
-            <groupId>${groupId}</groupId>
-            <artifactId>${rootArtifactId}-integration-tests</artifactId>
-            <version>${version}</version>
-            <scope>test</scope>
-            <classifier>tests</classifier>
-        </dependency>
         <!-- Add any additional AMPs or extension JARs here that you want to be deployed in Alfresco -->
         <!-- IMPORTANT: 
              If using amp extensions only, add <includeTypes>amp</includeTypes> to the "collect-extensions" execution below.
@@ -49,18 +42,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
-                    <!-- Copy the repository extension and the dependencies required for execute integration tests -->
-                    <execution>
-                        <id>collect-test-artifacts</id>
-                        <phase>pre-integration-test</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.directory}/extensions</outputDirectory>
-                            <excludeScope>compile</excludeScope>
-                        </configuration>
-                    </execution>
                     <!-- Collect extensions (JARs or AMPs) declared in this module do be deployed to docker -->
                     <execution>
                         <id>collect-extensions</id>

@@ -1,0 +1,11 @@
+version: '3.4'
+services:
+  dockerhost:
+    image: qoomon/docker-host
+    cap_add: [ 'NET_ADMIN', 'NET_RAW' ]
+    restart: on-failure
+  ${project.artifactId}-ass:
+    environment:
+      SOLR_ALFRESCO_HOST: dockerhost
+      SOLR_ALFRESCO_PORT: ${acs.port}
+    depends_on: [ dockerhost ]

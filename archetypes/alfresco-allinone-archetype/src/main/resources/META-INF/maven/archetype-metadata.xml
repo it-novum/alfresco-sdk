@@ -97,24 +97,6 @@
             </fileSets>
         </module>
 
-        <module id="${rootArtifactId}-integration-tests"
-                name="${rootArtifactId}-integration-tests"
-                dir="__rootArtifactId__-integration-tests">
-            <fileSets>
-                <fileSet filtered="true" packaged="true" encoding="UTF-8">
-                    <directory>src/main/java</directory>
-                    <includes>
-                        <include>**/*.java</include>
-                    </includes>
-                </fileSet>
-                <fileSet filtered="true" packaged="true" encoding="UTF-8">
-                    <directory>src/test/java</directory>
-                    <includes>
-                        <include>**/*.java</include>
-                    </includes>
-                </fileSet>
-            </fileSets>
-        </module>
 
         <module id="${rootArtifactId}-platform-docker"
                 name="${rootArtifactId}-platform-docker"
@@ -171,6 +153,45 @@
                 </fileSet>
             </fileSets>
         </module>
+
+        <module id="${rootArtifactId}-integration-tests"
+                name="${rootArtifactId}-integration-tests"
+                dir="__rootArtifactId__-integration-tests">
+            <fileSets>
+                <fileSet filtered="true" packaged="true" encoding="UTF-8">
+                    <directory>src/main/java</directory>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                </fileSet>
+                <fileSet filtered="true" packaged="true" encoding="UTF-8">
+                    <directory>src/test/java</directory>
+                    <includes>
+                        <include>**/*.java</include>
+                    </includes>
+                </fileSet>
+                <fileSet encoding="UTF-8" filtered="false">
+                    <directory>src/main/tomcat</directory>
+                    <includes>
+                        <include>**/share-config-custom.xml</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/*.properties</exclude>
+                    </excludes>
+                </fileSet>
+                <fileSet encoding="UTF-8" filtered="true">
+                    <directory>src/main/tomcat</directory>
+                    <includes>
+                        <include>**/*.properties</include>
+                        <include>**/*.md</include>
+                        <include>**/*.xml</include>
+                    </includes>
+                    <excludes>
+                        <exclude>**/share-config-custom.xml</exclude>
+                    </excludes>
+                </fileSet>
+            </fileSets>
+        </module>
     </modules>
 
     <fileSets>
@@ -187,6 +208,7 @@
                 <include>run.sh</include>
                 <include>run.bat</include>
                 <include>README.md</include>
+                <include>invoker.properties</include>
             </includes>
         </fileSet>
     </fileSets>

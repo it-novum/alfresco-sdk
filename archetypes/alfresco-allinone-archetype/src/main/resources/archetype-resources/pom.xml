@@ -9,10 +9,6 @@
     <description>All-In-One (AIO) project for SDK 4.0</description>
     <packaging>pom</packaging>
 
-    <prerequisites>
-        <maven>3.3.0</maven>
-    </prerequisites>
-
     <properties>
         <!-- Alfresco Maven Plugin version to use -->
         <alfresco.sdk.version>@@alfresco.sdk.parent.version@@</alfresco.sdk.version>
@@ -39,6 +35,7 @@
         <acs.port>8080</acs.port>
         <acs.debug.port>8888</acs.debug.port>
         <postgres.port>5555</postgres.port>
+        <solr.port>8983</solr.port>
         <!-- This parameter is only required for those cases in which ACS is not exposed in http://localhost:8080/alfresco (i.e. Windows Docker) -->
         <test.acs.endpoint.path>@@test.acs.endpoint.path@@</test.acs.endpoint.path>
 
@@ -245,6 +242,17 @@
                     <artifactId>maven-dependency-plugin</artifactId>
                     <version>3.1.1</version>
                 </plugin>
+
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>exec-maven-plugin</artifactId>
+                    <version>1.6.0</version>
+                    <configuration>
+                        <executable>java</executable>
+                        <skip>true</skip>
+                    </configuration>
+                </plugin>
+
             </plugins>
         </pluginManagement>
 
@@ -272,7 +280,7 @@
                             <goal>copy-resources</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.outputDirectory}/docker</outputDirectory>
+                            <outputDirectory>${project.build.directory}/docker</outputDirectory>
                             <resources>
                                 <resource>
                                     <directory>docker</directory>
@@ -368,6 +376,112 @@
                     <alwaysGenerate>true</alwaysGenerate>
                 </configuration>
             </plugin>
+
+            <!-- Manage docker via maven -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>start-docker</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <executable>docker-compose</executable>
+                            <skip>false</skip>
+                            <arguments>
+                                <argument>-f</argument>
+                                <argument>${project.build.directory}/docker/docker-compose.yml</argument>
+                                <argument>-f</argument>
+                                <argument>${project.build.directory}/docker/${docker-compose.override.file}</argument>
+                                <argument>up</argument>
+                                <argument>--build</argument>
+                                <argument>-d</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>stop-docker</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <executable>docker-compose</executable>
+                            <skip>false</skip>
+                            <arguments>
+                                <argument>-f</argument>
+                                <argument>${project.build.directory}/docker/docker-compose.yml</argument>
+                                <argument>-f</argument>
+                                <argument>${project.build.directory}/docker/${docker-compose.override.file}</argument>
+                                <argument>down</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>purge-docker</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <executable>docker-compose</executable>
+                            <skip>false</skip>
+                            <arguments>
+                                <argument>-f</argument>
+                                <argument>${project.build.directory}/docker/docker-compose.yml</argument>
+                                <argument>-f</argument>
+                                <argument>${project.build.directory}/docker/${docker-compose.override.file}</argument>
+                                <argument>down</argument>
+                                <argument>--rmi</argument>
+                                <argument>all</argument>
+                                <argument>--volumes</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>tail-docker</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <executable>docker-compose</executable>
+                            <skip>false</skip>
+                            <arguments>
+                                <argument>-f</argument>
+                                <argument>${project.build.directory}/docker/docker-compose.yml</argument>
+                                <argument>-f</argument>
+                                <argument>${project.build.directory}/docker/${docker-compose.override.file}</argument>
+                                <argument>logs</argument>
+                                <argument>-f</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>tail-all-docker</id>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <executable>docker-compose</executable>
+                            <skip>false</skip>
+                            <arguments>
+                                <argument>-f</argument>
+                                <argument>${project.build.directory}/docker/docker-compose.yml</argument>
+                                <argument>-f</argument>
+                                <argument>${project.build.directory}/docker/${docker-compose.override.file}</argument>
+                                <argument>logs</argument>
+                                <argument>--tail="all"</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
     </build>
 
@@ -409,6 +523,44 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>docker-deply</id>
+            <activation>
+                <property>
+                    <name>local</name>
+                    <value>!true</value>
+                </property>
+            </activation>
+            <properties>
+                <docker-compose.override.file>docker-compose.override.yml</docker-compose.override.file>
+            </properties>
+        </profile>
+        <profile>
+            <id>local-deploy</id>
+            <activation>
+                <property>
+                    <name>local</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <properties>
+                <docker-compose.override.file>docker-compose.local.yml</docker-compose.override.file>
+            </properties>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.codehaus.cargo</groupId>
+                            <artifactId>cargo-maven2-plugin</artifactId>
+                            <version>1.7.2</version>
+                            <configuration>
+                                <skip>true</skip>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
     </profiles>
 
     <!--
@@ -448,4 +600,5 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
+
 </project>
