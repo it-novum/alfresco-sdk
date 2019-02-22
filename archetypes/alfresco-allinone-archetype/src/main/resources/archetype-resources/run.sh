@@ -11,7 +11,7 @@ else
   export MVN_EXEC="${symbol_dollar}{M2_HOME}/bin/mvn"
 fi
 
-if [ "$2"=="local" ]; then
+if [ "$2" = "local" ]; then
   export COMPOSE_FILE_OVERRIDE=${symbol_dollar}{PWD}/target/classes/docker/docker-compose.local.yml
   export MVN_BUILD_PARAMS=-Dlocal=true ${symbol_dollar}{MVN_BUILD_PARAMS}
 fi
@@ -70,7 +70,7 @@ help() {
 
 case "${symbol_dollar}1" in
   build_start)
-    if [ "$2"=="local" ]; then
+    if [ "$2" = "local" ]; then
         start_local
     else
         build
@@ -78,7 +78,7 @@ case "${symbol_dollar}1" in
     fi
     ;;
   start)
-    if [ "$2"=="local" ]; then
+    if [ "$2" = "local" ]; then
         start_local
     else
         start_docker
@@ -94,14 +94,14 @@ case "${symbol_dollar}1" in
     tail
     ;;
   reload_share)
-    if [ "$2"=="local" ]; then
+    if [ "$2" = "local" ]; then
         help
     else
         reload_share
     fi
     ;;
   reload_acs)
-    if [ "$2"=="local" ]; then
+    if [ "$2" = "local" ]; then
         help
     else
         reload_acs
