@@ -59,11 +59,11 @@ tail_all() {
     ${symbol_dollar}MVN_EXEC package exec:exec@tail-all-docker -N ${symbol_dollar}{MVN_BUILD_PARAMS}
 }
 
-test() {
+verify() {
     ${symbol_dollar}MVN_EXEC verify ${symbol_dollar}{MVN_BUILD_PARAMS}
 }
 
-help() {
+show_help() {
     echo "Usage: ${symbol_dollar}0 {build_start|start|stop|purge|tail|reload_share|reload_acs|build_test|test}"
     echo "Or   : ${symbol_dollar}0 {build_start|start|stop|purge|tail|build_test|test} local"
 }
@@ -95,26 +95,26 @@ case "${symbol_dollar}1" in
     ;;
   reload_share)
     if [ "$2" = "local" ]; then
-        help
+        show_help
     else
         reload_share
     fi
     ;;
   reload_acs)
     if [ "$2" = "local" ]; then
-        help
+        show_help
     else
         reload_acs
     fi
     ;;
   build_test)
-    test
+    verify
     tail_all
     down_docker
     ;;
   test)
-    test
+    verify
     ;;
   *)
-    help
+    show_help
 esac
