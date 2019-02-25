@@ -38,6 +38,20 @@ All the services of the project are now run as docker containers. The run script
  * Resources loaded from META-INF
  * Web Fragment (this includes a sample servlet configured via web fragment)
 
+# Running local deployment (experimental)
+
+The project supports running ACS and Share in the local tomcat mode. In that mode the database and ASS are run within the docker containers but ACS and Share are deployed in a locally installed tomcat.
+
+To run the project in that mode add `local` parameter to the run command.  E.g. `./run.sh build_start local`. You will need to add that parameter to any run command you want to execute (including purge). Please also note that reloading share and acs commands are not available at the moment in the local mode.
+
+**Important!** You can only run in the local mode or container mode - you cannot mix modes. If you want to change the mode, you need to execute purge first.
+
+**Important!** At the moment, the configuration files for the local mode are separate from the container mode. They are located in the `[artifactId]-integration-tests/src/main/tomcat` folder. Also, the additional extension modules that need to be deployed are configured separately - please look into `[artifactId]-integration-tests/pom.xml` and plugin executions with ids `collect-acs-extensions` and `collect-share-extensions`.
+
+# Running with maven commands
+
+The project (in both modes) can be also run mostly in with pure maven commands. For example instead of `run build_test` you can execute `mvn verify`. The exact commands depend on the mode - please have a look into the run script.  
+
 # TODO
 
   * Abstract assembly into a dependency so we don't have to ship the assembly in the archetype
