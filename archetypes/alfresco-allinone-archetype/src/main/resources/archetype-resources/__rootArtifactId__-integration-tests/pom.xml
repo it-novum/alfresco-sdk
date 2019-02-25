@@ -161,6 +161,7 @@
                 <container.installer.url>https://archive.apache.org/dist/tomcat/tomcat-8/v8.5.28/bin/apache-tomcat-8.5.28.zip</container.installer.url>
                 <container.start.timeout>480000</container.start.timeout>
                 <container.port>${acs.port}</container.port>
+                <container.jvmargs>-Djava.net.preferIPv4Stack=true -Djava.net.preferIPv4Addresses=true</container.jvmargs>
                 <container.jvmargs.agentpath></container.jvmargs.agentpath>
                 <container.jvmargs.debug></container.jvmargs.debug>
                 <acs.deploy.directory>${project.build.directory}/alfresco/WEB-INF/lib/</acs.deploy.directory>
@@ -480,7 +481,7 @@
                                     <cargo.logging>low</cargo.logging>
                                     <cargo.servlet.port>${container.port}</cargo.servlet.port>
                                     <cargo.tomcat.connector.maxHttpHeaderSize>65536</cargo.tomcat.connector.maxHttpHeaderSize>
-                                    <cargo.start.jvmargs>${container.jvmargs.agentpath} ${container.jvmargs.debug}</cargo.start.jvmargs>
+                                    <cargo.start.jvmargs>${container.jvmargs.agentpath} ${container.jvmargs.debug} ${container.jvmargs}</cargo.start.jvmargs>
                                 </properties>
                             </configuration>
                             <deployables>
